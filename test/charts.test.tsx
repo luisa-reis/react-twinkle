@@ -1,6 +1,6 @@
 import type {ReactElement} from 'react';
 import {describe, expect, it} from 'vitest';
-import {Box, LineChart, createRoot} from '../src';
+import {BarChart, Box, LineChart, createRoot} from '../src';
 import type {Canvas} from '../src';
 import {barHeights, bulletHeights, columns} from '../src/charts/series';
 
@@ -100,5 +100,24 @@ describe('LineChart', () => {
   it('draws a flat line while there are no values', () => {
     expect(draw(<LineChart empty="#00ff00" />, 3, 4)).toEqual(['...', '...', 'ggg', '...']);
     expect(draw(<LineChart values={[]} empty="#00ff00" />, 3, 4)[2]).toBe('ggg');
+  });
+});
+
+describe('BarChart', () => {
+  it('stands as many bars as fit on the bottom row, the latest in its own colour', () => {
+    const chart = <BarChart values={[1, 2, 4]} color="#ff0000" last="#00ff00" barWidth={1} />;
+    expect(draw(chart, 5, 4)).toEqual(['....g', '....g', '..r.g', 'r.r.g']);
+  });
+
+  it('centres the bars and never draws one under a pixel', () => {
+    expect(draw(<BarChart values={[0, 8]} color="#0000ff" barWidth={2} gap={2} />, 8, 3)).toEqual([
+      '.....bb.',
+      '.....bb.',
+      '.bb..bb.',
+    ]);
+  });
+
+  it('draws a flat line on the bottom row while there are no values', () => {
+    expect(draw(<BarChart empty="#00ff00" />, 3, 3)).toEqual(['...', '...', 'ggg']);
   });
 });
