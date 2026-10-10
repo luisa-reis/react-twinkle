@@ -100,11 +100,12 @@ export function encodePng({data, width, height}: Picture): Buffer {
  * The frames of an animation as it is stored: each is only the rectangle
  * that differs from the frame before, laid over it, and a frame that does
  * not differ adds to the time of the one before. The first is whole.
+ * `frames` is an array, or anything that gives them one at a time.
  */
-export function animationParts(frames: readonly Picture[]): AnimationPart[] {
+export function animationParts(frames: Iterable<Picture>): AnimationPart[] {
   const parts: AnimationPart[] = [];
   let shown: Uint8Array | undefined;
-  frames.forEach((frame) => {
+  const add = (frame: Picture) => {
     const {data, width, height} = frame;
     if (!shown) {
       parts.push({x: 0, y: 0, width, height, data, frames: 1});
@@ -142,17 +143,24 @@ export function animationParts(frames: readonly Picture[]): AnimationPart[] {
     }
     parts.push(part);
     shown = data;
-  });
+  };
+  // Anything that can be iterated, taken one at a time: a long animation
+  // need not have all its frames in memory at once.
+  const iterator = frames[Symbol.iterator]();
+  for (let step = iterator.next(); !step.done; step = iterator.next()) {
+    add(step.value);
+  }
   return parts;
 }
 
 /**
  * An animated PNG of RGB pictures of one size, `fps` of them a second,
- * looping. A viewer that does not know APNG shows the first.
+ * looping: an array of them, or anything that gives them one at a time.
+ * A viewer that does not know APNG shows the first.
  */
-export function encodeApng(frames: readonly Picture[], fps: number): Buffer {
-  const [{width, height}] = frames;
+export function encodeApng(frames: Iterable<Picture>, fps: number): Buffer {
   const parts = animationParts(frames);
+  const [{width, height}] = parts;
   const control = Buffer.alloc(8);
   control.writeUInt32BE(parts.length, 0);
   const out = [SIGNATURE, header(width, height), chunk('acTL', control)];
