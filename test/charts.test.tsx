@@ -1,5 +1,35 @@
+import type {ReactElement} from 'react';
 import {describe, expect, it} from 'vitest';
+import {Box, LineChart, createRoot} from '../src';
+import type {Canvas} from '../src';
 import {barHeights, bulletHeights, columns} from '../src/charts/series';
+
+// A canvas as rows of letters: `r`, `g`, `b` or `w` for a pixel that is
+// mostly that colour, `+` for any other lit one, `.` for a dark one.
+function rows(canvas: Canvas): string[] {
+  const out: string[] = [];
+  for (let y = 0; y < canvas.height; y += 1) {
+    let row = '';
+    for (let x = 0; x < canvas.width; x += 1) {
+      const {r, g, b} = canvas.get(x, y);
+      const key = [r, g, b].map((v) => (v > 127 ? 1 : 0)).join('');
+      const names: Record<string, string> = {'100': 'r', '010': 'g', '001': 'b', '111': 'w'};
+      row += names[key] ?? (r + g + b > 0 ? '+' : '.');
+    }
+    out.push(row);
+  }
+  return out;
+}
+
+function draw(element: ReactElement, width: number, height: number): string[] {
+  const root = createRoot({width, height});
+  root.render(
+    <Box width={width} height={height}>
+      {element}
+    </Box>,
+  );
+  return rows(root.frame({frame: 0, now: new Date(0)}));
+}
 
 describe('series', () => {
   it('average or stretch to the columns there are', () => {
@@ -26,5 +56,49 @@ describe('series', () => {
     expect(bulletHeights(7)).toEqual([3, 5]);
     expect(bulletHeights(10)).toEqual([4, 8]);
     expect(bulletHeights(2)).toEqual([2, 2]);
+  });
+});
+
+describe('LineChart', () => {
+  it('runs from the lowest value on the bottom row to the highest on the top', () => {
+    expect(draw(<LineChart values={[0, 1, 2, 3, 4]} color="#ff0000" />, 5, 5)).toEqual([
+      '....r',
+      '...r.',
+      '..r..',
+      '.r...',
+      'r....',
+    ]);
+  });
+
+  it('stretches a short series and draws a level one through the middle', () => {
+    expect(draw(<LineChart values={[0, 4]} />, 5, 5)[0]).toBe('....w');
+    expect(draw(<LineChart values={[3, 3]} />, 4, 5)).toEqual([
+      '....',
+      '....',
+      'wwww',
+      '....',
+      '....',
+    ]);
+  });
+
+  it('fills what is under the line and dots the latest value', () => {
+    const fill = ['#0000ff', '#0000ff'] as const;
+    expect(draw(<LineChart values={[0, 2]} color="#ff0000" fill={fill} />, 3, 3)).toEqual([
+      '..r',
+      '.rb',
+      'rbb',
+    ]);
+    expect(draw(<LineChart values={[0, 1]} color="#ff0000" dot="#00ff00" />, 5, 5)).toEqual([
+      '..ggg',
+      '..ggg',
+      '..ggg',
+      '.r...',
+      '.....',
+    ]);
+  });
+
+  it('draws a flat line while there are no values', () => {
+    expect(draw(<LineChart empty="#00ff00" />, 3, 4)).toEqual(['...', '...', 'ggg', '...']);
+    expect(draw(<LineChart values={[]} empty="#00ff00" />, 3, 4)[2]).toBe('ggg');
   });
 });

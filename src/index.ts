@@ -22,6 +22,8 @@ export {default as Pixels} from './components/Pixels';
 export type {PixelsProps} from './components/Pixels';
 export {default as Image} from './components/Image';
 export type {ImageProps} from './components/Image';
+export {default as LineChart} from './components/LineChart';
+export type {LineChartProps} from './components/LineChart';
 export {default as Marquee} from './components/Marquee';
 export type {MarqueeProps} from './components/Marquee';
 export type {
