@@ -1,6 +1,6 @@
 import type {ReactElement} from 'react';
 import {describe, expect, it} from 'vitest';
-import {BarChart, Box, LineChart, createRoot} from '../src';
+import {BarChart, Box, BulletChart, LineChart, createRoot} from '../src';
 import type {Canvas} from '../src';
 import {barHeights, bulletHeights, columns} from '../src/charts/series';
 
@@ -119,5 +119,33 @@ describe('BarChart', () => {
 
   it('draws a flat line on the bottom row while there are no values', () => {
     expect(draw(<BarChart empty="#00ff00" />, 3, 3)).toEqual(['...', '...', 'ggg']);
+  });
+});
+
+describe('BulletChart', () => {
+  it('draws the bar to the value over bands, with a marker at the target', () => {
+    const chart = (
+      <BulletChart value={50} target={80} ranges={[60]} color="#ff0000" marker="#00ff00" />
+    );
+    expect(draw(chart, 10, 7)).toEqual([
+      '++++++++++',
+      '++++++++g+',
+      'rrrrr+++g+',
+      'rrrrr+++g+',
+      'rrrrr+++g+',
+      '++++++++g+',
+      '++++++++++',
+    ]);
+  });
+
+  it('has no bar without a value and keeps the marker on the scale', () => {
+    const chart = <BulletChart target={500} color="#ff0000" marker="#00ff00" />;
+    expect(draw(chart, 6, 3)).toEqual(['+++++g', '+++++g', '+++++g']);
+    expect(draw(<BulletChart value={NaN} color="#ff0000" />, 4, 3)[1]).toBe('++++');
+  });
+
+  it('scales from min to max', () => {
+    const chart = <BulletChart value={0} min={-10} max={10} color="#ff0000" band="#000000" />;
+    expect(draw(chart, 4, 3)).toEqual(['....', 'rr..', '....']);
   });
 });

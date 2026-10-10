@@ -24,6 +24,8 @@ export {default as Image} from './components/Image';
 export type {ImageProps} from './components/Image';
 export {default as BarChart} from './components/BarChart';
 export type {BarChartProps} from './components/BarChart';
+export {default as BulletChart} from './components/BulletChart';
+export type {BulletChartProps} from './components/BulletChart';
 export {default as LineChart} from './components/LineChart';
 export type {LineChartProps} from './components/LineChart';
 export {default as Marquee} from './components/Marquee';
