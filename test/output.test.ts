@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
+import dgram from 'node:dgram';
 import zlib from 'node:zlib';
-import {chunks, packets, parseTarget} from '../src/output/ddp';
+import DdpOutput, {chunks, packets, parseTarget} from '../src/output/ddp';
 import {animationParts, encodeApng, encodePng, scaleUp} from '../src/output/png';
 import type {Picture} from '../src/output/png';
 
@@ -21,6 +22,25 @@ describe('DDP', () => {
     expect(out.map((p) => p[0])).toEqual([0x40, 0x41]);
     expect([...out[1].subarray(1, 10)]).toEqual([3, 0x0b, 1, 0, 0, 2, 0xd3, 2, 0xd0]);
     expect(out[1][10]).toBe(7);
+  });
+
+  it('sends every packet before it closes', async () => {
+    const listener = dgram.createSocket('udp4');
+    const got: number[] = [];
+    listener.on('message', (message) => got.push(message[0]));
+    await new Promise<void>((resolve) => {
+      listener.bind(0, '127.0.0.1', resolve);
+    });
+    const output = new DdpOutput(`127.0.0.1:${listener.address().port}`);
+    output.send(new Uint8Array(64 * 64 * 3));
+    output.send(new Uint8Array(64 * 64 * 3));
+    await output.close();
+    await new Promise((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    listener.close();
+    expect(got).toHaveLength(18);
+    expect(got.filter((first) => first === 0x41)).toHaveLength(2);
   });
 
   it('defaults the port', () => {

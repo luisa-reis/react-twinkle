@@ -76,6 +76,10 @@ export default class DdpOutput {
 
   sequence: number;
 
+  pending: number;
+
+  whenIdle: (() => void) | undefined;
+
   socket: dgram.Socket;
 
   constructor(target: string) {
@@ -83,6 +87,8 @@ export default class DdpOutput {
     this.host = host;
     this.port = port;
     this.sequence = 1;
+    this.pending = 0;
+    this.whenIdle = undefined;
     this.socket = dgram.createSocket('udp4');
     // A send that fails (the board is away) is not worth stopping for.
     this.socket.on('error', () => {});
@@ -91,15 +97,27 @@ export default class DdpOutput {
   /** Sends one frame, the canvas's RGB bytes. */
   send(rgb: Uint8Array): void {
     packets(rgb, this.sequence).forEach((packet) => {
-      this.socket.send(packet, this.port, this.host, () => {});
+      this.pending += 1;
+      this.socket.send(packet, this.port, this.host, () => {
+        this.pending -= 1;
+        if (this.pending === 0 && this.whenIdle) {
+          this.whenIdle();
+        }
+      });
     });
     // Sequence numbers run 1 to 15; 0 means "not used".
     this.sequence = this.sequence >= 15 ? 1 : this.sequence + 1;
   }
 
+  /** Closes the socket, once what was sent has gone out. */
   close(): Promise<void> {
     return new Promise<void>((resolve) => {
-      this.socket.close(resolve);
+      const shut = () => this.socket.close(resolve);
+      if (this.pending === 0) {
+        shut();
+      } else {
+        this.whenIdle = shut;
+      }
     });
   }
 }
