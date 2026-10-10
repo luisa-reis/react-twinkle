@@ -34,7 +34,11 @@ Context for Claude Code sessions working on react-twinkle.
   font files, here or as test fixtures; the tests draw with fonts made in
   `test/support/fonts.ts`.
 - `src/components/` — `Box`, `Text`, `Marquee`, `Rect`, `Circle`, `Line`,
-  `Polyline`, `Pixels`, `Image`; `src/hooks.ts`, `src/contexts.ts`.
+  `Polyline`, `Pixels`, `Image`, and the charts `LineChart`, `BarChart`,
+  `BulletChart`; `src/hooks.ts`, `src/contexts.ts`.
+- `src/charts/series.ts` — fitting a series to the pixels there are.
+  duckboard-js's chart tiles draw with these components, so they are
+  held to the same pixel-for-pixel standard.
 - `src/output/` — DDP, PNG and animated PNG.
 - `examples/` — small components; `npm run screenshots` draws
   `docs/screenshots` from them.
