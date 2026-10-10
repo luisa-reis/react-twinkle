@@ -71,6 +71,7 @@ export {default as MonoFont} from './fonts/mono';
 export type {MonoFontDescription} from './fonts/mono';
 export {default as U8g2Font} from './fonts/u8g2';
 export type {U8g2Glyph} from './fonts/u8g2';
+export {barHeights, bulletHeights, columns} from './charts/series';
 export {circleOutline} from './graphics/circle';
 export type {CircleGeometry} from './graphics/circle';
 export {linePoints, polylinePoints} from './graphics/line';
