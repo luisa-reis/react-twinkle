@@ -99,3 +99,5 @@ export {decodeFrames, decodeImage, pictureFormat} from './pictures/decode';
 export type {PictureFormat, PictureFrame} from './pictures/decode';
 export {crop, resize, scale} from './pictures/scale';
 export type {Fit, ScaleFilter, ScaleOptions} from './pictures/scale';
+export {flip, rotate, translate} from './pictures/transform';
+export type {Edge, RotateOptions, SampleFilter, TranslateOptions} from './pictures/transform';
