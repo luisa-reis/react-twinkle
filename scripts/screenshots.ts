@@ -56,7 +56,15 @@ await build({
   format: 'esm',
   platform: 'node',
   jsx: 'automatic',
-  external: ['react', 'react/jsx-runtime', 'react-reconciler', 'react-reconciler/*'],
+  external: [
+    'react',
+    'react/jsx-runtime',
+    'react-reconciler',
+    'react-reconciler/*',
+    'jpeg-js',
+    'omggif',
+    'pngjs',
+  ],
 });
 
 const twinkle: Twinkle = await import(pathToFileURL(path.join(work, 'src', 'index.js')).href);

@@ -95,3 +95,5 @@ export {animationParts, encodeApng, encodePng, scaleUp} from './output/png';
 export type {AnimationPart} from './output/png';
 export {blank, channels, isOpaque, toRgb, toRgba} from './pictures/picture';
 export type {Picture} from './pictures/picture';
+export {decodeFrames, decodeImage, pictureFormat} from './pictures/decode';
+export type {PictureFormat, PictureFrame} from './pictures/decode';
