@@ -39,6 +39,14 @@ Context for Claude Code sessions working on react-twinkle.
 - `src/charts/series.ts` — fitting a series to the pixels there are.
   duckboard-js's chart tiles draw with these components, so they are
   held to the same pixel-for-pixel standard.
+- `src/pictures/` — a picture (`{data, width, height}`, RGB or RGBA) and
+  what is done to one: `decode.ts` (JPEG, PNG, GIF), `scale.ts`,
+  `transform.ts` (rotate, translate, flip), `gamma.ts`, and the
+  `usePicture` hook. They are functions of a picture, not props of
+  `Image`, and keep the alpha until it is painted. The arithmetic is
+  plain JavaScript numbers, with no single precision; only `scale`'s
+  Lanczos filter is held to duckboard's pixels (duckboard-js scales with
+  it), so leave its RGB path as it is.
 - `src/output/` — DDP, PNG and animated PNG.
 - `examples/` — small components; `npm run screenshots` draws
   `docs/screenshots` from them.
