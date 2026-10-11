@@ -101,3 +101,4 @@ export {crop, resize, scale} from './pictures/scale';
 export type {Fit, ScaleFilter, ScaleOptions} from './pictures/scale';
 export {flip, rotate, translate} from './pictures/transform';
 export type {Edge, RotateOptions, SampleFilter, TranslateOptions} from './pictures/transform';
+export {default as gamma} from './pictures/gamma';
