@@ -18,6 +18,26 @@ Context for Claude Code sessions working on react-twinkle.
   `src/paint.ts` or a component, run `npm run check` in ../duckboard-js
   too.**
 
+## Documentation
+
+`README.md` is short on purpose: what the project is, getting started,
+the licence. Reference material is in `docs/`, one subject a file, and
+`docs/README.md` is the index. Look there first for how something is
+used, and put new reference text there, not in the README.
+
+| Subject                                            | File                   |
+| -------------------------------------------------- | ---------------------- |
+| the design: reconciler, root, paint, no layout     | `docs/how-it-works.md` |
+| each component's props; the charts                 | `docs/components.md`   |
+| decoding, scaling, rotating pictures; `usePicture` | `docs/pictures.md`     |
+| the hooks                                          | `docs/hooks.md`        |
+| registering fonts, formats, sources, licences      | `docs/fonts.md`        |
+| DDP, PNG, APNG; `render` and `createRoot`          | `docs/outputs.md`      |
+| exported types                                     | `docs/types.md`        |
+| building, testing, screenshots                     | `docs/developing.md`   |
+
+A new file in `docs/` gets a row here and in `docs/README.md`.
+
 ## Layout
 
 - `src/reconciler.ts` — the host config; `src/nodes.ts` — the node tree,
@@ -82,7 +102,7 @@ npm run screenshots  # after a change that shows in the examples; needs
   synchronous.
 - A new primitive is a node type and its element's props in `nodes.ts`, a
   case in `paint.ts`, a component, an export in `index.ts`, a test, and a
-  line in the README.
+  line in `docs/components.md`.
 - Fonts are other people's work under their own terms, so none is kept
   here (`docs/fonts.md`); the code is MIT.
 - The repo uses jujutsu (colocated with git). Commits are small, with a
