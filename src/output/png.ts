@@ -1,17 +1,13 @@
-// PNG and animated PNG (APNG) writers for RGB pictures, with nothing but
-// zlib: enough to save a canvas, or a run of them, as a picture.
+// PNG and animated PNG (APNG) writers for pictures, RGB or RGBA, with
+// nothing but zlib: enough to save a canvas, or a run of them, as a picture.
 import zlib from 'node:zlib';
-
-/** An RGB picture: its bytes, row by row, three a pixel, and its size. */
-export interface Picture {
-  data: Uint8Array;
-  width: number;
-  height: number;
-}
+import {channels} from '../pictures/picture';
+import type {Picture} from '../pictures/picture';
 
 /**
- * A stored frame of an animation: the rectangle that changed, its RGB
- * bytes, and how many frames it is shown for.
+ * A stored frame of an animation: the rectangle that changed, its bytes
+ * (as many a pixel as the pictures have), and how many frames it is shown
+ * for.
  */
 export interface AnimationPart {
   x: number;
@@ -49,48 +45,49 @@ function chunk(type: string, data: Uint8Array): Buffer {
   return out;
 }
 
-function header(width: number, height: number): Buffer {
+function header(width: number, height: number, each: number): Buffer {
   const data = Buffer.alloc(13);
   data.writeUInt32BE(width, 0);
   data.writeUInt32BE(height, 4);
   data[8] = 8; // bits a channel
-  data[9] = 2; // RGB
+  data[9] = each === 4 ? 6 : 2; // RGBA or RGB
   return chunk('IHDR', data);
 }
 
 // The rows, each after a byte that says it is not filtered, deflated.
-function deflate(rgb: Uint8Array, width: number, height: number): Buffer {
-  const stride = width * 3;
+function deflate(bytes: Uint8Array, width: number, height: number): Buffer {
+  const stride = bytes.length / height;
   const raw = Buffer.alloc((stride + 1) * height);
   for (let y = 0; y < height; y += 1) {
-    raw.set(rgb.subarray(y * stride, (y + 1) * stride), y * (stride + 1) + 1);
+    raw.set(bytes.subarray(y * stride, (y + 1) * stride), y * (stride + 1) + 1);
   }
   return zlib.deflateSync(raw, {level: 9});
 }
 
-/** A picture's RGB bytes scaled up `scale` times, each pixel a square. */
-export function scaleUp({data, width, height}: Picture, scale: number): Picture {
+/** A picture scaled up `scale` times, each pixel a square. */
+export function scaleUp(picture: Picture, scale: number): Picture {
+  const {data, width, height} = picture;
   if (scale === 1) {
     return {data, width, height};
   }
-  const out = new Uint8Array(width * scale * height * scale * 3);
+  const each = channels(picture);
+  const out = new Uint8Array(width * scale * height * scale * each);
   for (let y = 0; y < height * scale; y += 1) {
     for (let x = 0; x < width * scale; x += 1) {
-      const from = (Math.floor(y / scale) * width + Math.floor(x / scale)) * 3;
-      const to = (y * width * scale + x) * 3;
-      out[to] = data[from];
-      out[to + 1] = data[from + 1];
-      out[to + 2] = data[from + 2];
+      const from = (Math.floor(y / scale) * width + Math.floor(x / scale)) * each;
+      const to = (y * width * scale + x) * each;
+      out.set(data.subarray(from, from + each), to);
     }
   }
   return {data: out, width: width * scale, height: height * scale};
 }
 
-/** A PNG of an RGB picture, { data, width, height }, as a Buffer. */
-export function encodePng({data, width, height}: Picture): Buffer {
+/** A PNG of a picture, { data, width, height }, as a Buffer. */
+export function encodePng(picture: Picture): Buffer {
+  const {data, width, height} = picture;
   return Buffer.concat([
     SIGNATURE,
-    header(width, height),
+    header(width, height, channels(picture)),
     chunk('IDAT', deflate(data, width, height)),
     chunk('IEND', Buffer.alloc(0)),
   ]);
@@ -107,6 +104,7 @@ export function animationParts(frames: Iterable<Picture>): AnimationPart[] {
   let shown: Uint8Array | undefined;
   const add = (frame: Picture) => {
     const {data, width, height} = frame;
+    const each = channels(frame);
     if (!shown) {
       parts.push({x: 0, y: 0, width, height, data, frames: 1});
       shown = data;
@@ -115,8 +113,13 @@ export function animationParts(frames: Iterable<Picture>): AnimationPart[] {
     let [x0, y0, x1, y1] = [width, height, -1, -1];
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
-        const i = (y * width + x) * 3;
-        if (data[i] !== shown[i] || data[i + 1] !== shown[i + 1] || data[i + 2] !== shown[i + 2]) {
+        const i = (y * width + x) * each;
+        if (
+          data[i] !== shown[i] ||
+          data[i + 1] !== shown[i + 1] ||
+          data[i + 2] !== shown[i + 2] ||
+          (each === 4 && data[i + 3] !== shown[i + 3])
+        ) {
           x0 = Math.min(x0, x);
           y0 = Math.min(y0, y);
           x1 = Math.max(x1, x);
@@ -136,10 +139,10 @@ export function animationParts(frames: Iterable<Picture>): AnimationPart[] {
       height: y1 - y0 + 1,
       frames: 1,
     } as AnimationPart;
-    part.data = new Uint8Array(part.width * part.height * 3);
+    part.data = new Uint8Array(part.width * part.height * each);
     for (let y = 0; y < part.height; y += 1) {
-      const from = ((y0 + y) * width + x0) * 3;
-      part.data.set(data.subarray(from, from + part.width * 3), y * part.width * 3);
+      const from = ((y0 + y) * width + x0) * each;
+      part.data.set(data.subarray(from, from + part.width * each), y * part.width * each);
     }
     parts.push(part);
     shown = data;
@@ -154,16 +157,17 @@ export function animationParts(frames: Iterable<Picture>): AnimationPart[] {
 }
 
 /**
- * An animated PNG of RGB pictures of one size, `fps` of them a second,
- * looping: an array of them, or anything that gives them one at a time.
+ * An animated PNG of pictures of one size, all RGB or all RGBA, `fps` of
+ * them a second, looping: an array of them, or anything that gives them one at a time.
  * A viewer that does not know APNG shows the first.
  */
 export function encodeApng(frames: Iterable<Picture>, fps: number): Buffer {
   const parts = animationParts(frames);
-  const [{width, height}] = parts;
+  const [{width, height, data}] = parts;
   const control = Buffer.alloc(8);
   control.writeUInt32BE(parts.length, 0);
-  const out = [SIGNATURE, header(width, height), chunk('acTL', control)];
+  const each = data.length / (width * height);
+  const out = [SIGNATURE, header(width, height, each), chunk('acTL', control)];
   let sequence = 0;
   parts.forEach((part, index) => {
     const frame = Buffer.alloc(26);

@@ -3,7 +3,7 @@ import dgram from 'node:dgram';
 import zlib from 'node:zlib';
 import DdpOutput, {chunks, packets, parseTarget} from '../src/output/ddp';
 import {animationParts, encodeApng, encodePng, scaleUp} from '../src/output/png';
-import type {Picture} from '../src/output/png';
+import type {Picture} from '../src/pictures/picture';
 
 describe('DDP', () => {
   it('splits a frame evenly, between pixels', () => {

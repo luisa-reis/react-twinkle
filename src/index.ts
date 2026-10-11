@@ -92,4 +92,6 @@ export {
 } from './output/ddp';
 export type {DdpTarget} from './output/ddp';
 export {animationParts, encodeApng, encodePng, scaleUp} from './output/png';
-export type {AnimationPart, Picture} from './output/png';
+export type {AnimationPart} from './output/png';
+export {blank, channels, isOpaque, toRgb, toRgba} from './pictures/picture';
+export type {Picture} from './pictures/picture';
