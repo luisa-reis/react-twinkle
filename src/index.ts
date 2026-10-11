@@ -102,3 +102,5 @@ export type {Fit, ScaleFilter, ScaleOptions} from './pictures/scale';
 export {flip, rotate, translate} from './pictures/transform';
 export type {Edge, RotateOptions, SampleFilter, TranslateOptions} from './pictures/transform';
 export {default as gamma} from './pictures/gamma';
+export {default as usePicture} from './pictures/usePicture';
+export type {UsePictureOptions} from './pictures/usePicture';
