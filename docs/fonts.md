@@ -1,7 +1,30 @@
 # Fonts
 
+![Fixed-width and U8g2 fonts](screenshots/fonts.png)
+
+## Registering fonts
+
+react-twinkle reads fonts but has none: fonts are other people's work,
+each under its own terms, so the application provides the ones it draws
+with and registers them before drawing.
+
+| Call                                                                      | Registers                                                                                                                                                                            |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `registerMonoFont(name, { width, height, baseline, data, glyphsPerRow })` | a fixed-width bitmap font from its glyph image, as embedded-graphics keeps them: `glyphsPerRow` glyphs a row (sixteen unless said), one bit a pixel, ASCII then Latin-1's upper half |
+| `registerU8g2Font(name, data)`                                            | a [U8g2](https://github.com/olikraus/u8g2/wiki/fntlistall) font from the bytes of its data, most of them proportional                                                                |
+| `registerFont(name, font)`                                                | anything that implements a font: `kind`, `advance(text)`, `inkWidth(text)`, `extent()`, `draw(surface, text, x, y, color)`                                                           |
+
+`font` on `Text` and `Marquee` is the name a font was registered under.
+Left out, it is the default font: the first registered, or the one named
+with `setDefaultFont(name)`. `fontNames()` lists what is registered,
+`measureText(text, font)` measures a line, `getFont(name).extent()` says
+how far it rises and falls, and `clearFonts()` forgets them all. Drawing
+text before any font is registered is an error that says so.
+
+## Why there are none here
+
 react-twinkle has no fonts in it. It reads two formats, and the
-application registers the fonts it draws with (see Fonts in the README).
+application registers the fonts it draws with, as above.
 A font is its author's work under its own terms, which is the reason: the
 application chooses which fonts to use, where to get them and whether to
 distribute them, and this library's MIT licence covers none of them.
@@ -34,8 +57,12 @@ measures and draws.
 
 Keeping fonts out of a repository means fetching them when the
 application is built. duckboard-js is the worked
-example: its `scripts/fetch-fonts.mjs` downloads the two crates above
+example: its `scripts/fetch-fonts.ts` downloads the two crates above
 from crates.io at pinned versions, checks their SHA-256, takes out the
-fonts `src/fonts/list.js` names and writes them into a git-ignored module;
-`src/fonts/register.js` registers them. Its `docs/fonts.md` lists those
+fonts `src/fonts/list.ts` names and writes them into a git-ignored module;
+`src/fonts/register.ts` registers them. Its `docs/fonts.md` lists those
 fonts with their terms.
+
+---
+
+[Documentation index](README.md) · [Project README](../README.md)
