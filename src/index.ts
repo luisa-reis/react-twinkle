@@ -97,3 +97,5 @@ export {blank, channels, isOpaque, toRgb, toRgba} from './pictures/picture';
 export type {Picture} from './pictures/picture';
 export {decodeFrames, decodeImage, pictureFormat} from './pictures/decode';
 export type {PictureFormat, PictureFrame} from './pictures/decode';
+export {crop, resize, scale} from './pictures/scale';
+export type {Fit, ScaleFilter, ScaleOptions} from './pictures/scale';
