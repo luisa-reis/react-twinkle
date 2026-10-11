@@ -9,10 +9,10 @@ Context for Claude Code sessions working on react-twinkle.
   once a frame the tree is painted onto an RGB canvas, which an output
   sends to a WLED panel over DDP (or writes as a PNG).
 - Its drawing is a port of the Rust crates
-  [duckboard](../duckboard) draws with: embedded-graphics' primitives and
+  duckboard draws with: embedded-graphics' primitives and
   mono fonts, and the u8g2-fonts reader. A pixel must land where those put
   it, and in the same order (order shows when a colour has alpha).
-  [duckboard-js](../duckboard-js), beside this repository, is the proof:
+  duckboard-js, beside this repository, is the proof:
   its `npm run compare` renders duckboard's demos with both and compares
   every frame. **After changing anything in `src/graphics`, `src/fonts`,
   `src/paint.ts` or a component, run `npm run check` in ../duckboard-js

@@ -85,8 +85,8 @@ now })` draws one frame: it hands the frame to the components that ask
   [embedded-graphics](https://github.com/embedded-graphics/embedded-graphics)
   does it (circles, Bresenham lines, stroke alignment, font formats), so a panel
   drawn here matches one drawn by a Rust program using it. That is how
-  [duckboard-js](../duckboard-js) reproduces
-  [duckboard](../duckboard) frame for frame.
+  duckboard-js reproduces
+  duckboard frame for frame.
 
 There is no layout engine: a panel has a few thousand pixels, and every
 one is placed on purpose. A `Box` gives its children their own
@@ -230,7 +230,7 @@ text before any font is registered is an error that says so.
 
 [docs/fonts.md](docs/fonts.md) says where fonts in these formats are
 found, and shows a build step that fetches them:
-[duckboard-js](../duckboard-js) downloads the ones it uses when it is
+duckboard-js downloads the ones it uses when it is
 built and keeps none in its repository.
 
 ## Outputs
@@ -286,7 +286,7 @@ typescript-eslint's `no-use-before-define` on for functions, classes and
 variables alike. The scripts are TypeScript too, run with `tsx`.
 The tests draw with fonts made in `test/support/fonts.ts`; `npm run
 screenshots` borrows the fonts duckboard-js has fetched.
-It is developed side by side with [duckboard-js](../duckboard-js), which
+It is developed side by side with duckboard-js, which
 takes it from `src/` here when the two are checked out next to each other
 and is its largest test: every duckboard demo, frame for frame.
 

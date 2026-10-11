@@ -33,7 +33,7 @@ measures and draws.
 ## Fetching fonts when building
 
 Keeping fonts out of a repository means fetching them when the
-application is built. [duckboard-js](../duckboard-js) is the worked
+application is built. duckboard-js is the worked
 example: its `scripts/fetch-fonts.mjs` downloads the two crates above
 from crates.io at pinned versions, checks their SHA-256, takes out the
 fonts `src/fonts/list.js` names and writes them into a git-ignored module;
