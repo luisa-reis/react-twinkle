@@ -70,6 +70,10 @@ A new file in `docs/` gets a row here and in `docs/README.md`.
 - `src/output/` — DDP, PNG and animated PNG.
 - `examples/` — small components; `npm run screenshots` draws
   `docs/screenshots` from them.
+- `examples/dashboard/` — a complete app, a package of its own that
+  installs react-twinkle from npm (not from `src`): its own
+  `npm run check`, outside this repository's lint and type-check.
+  `docs/screenshots/dashboard.png` is its `npm run snapshot`.
 - `scripts/` — the build and the screenshots, TypeScript run with `tsx`.
 
 ## Checking

@@ -19,6 +19,9 @@ Also in the repository:
 
 - `examples/` has a small component for each subject; `screenshots/` here
   has the picture each one draws.
+- `examples/dashboard/` is a complete app with pages, widgets, live data
+  and tests, installing react-twinkle from npm; its README explains how it
+  is built.
 - `src/index.ts` lists everything the package exports.
 - `CLAUDE.md` at the top has the source layout and the conventions for
   changing the code.

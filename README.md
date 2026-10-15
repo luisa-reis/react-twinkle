@@ -38,17 +38,8 @@ from components, with state, hooks and context, in TypeScript.
 
 ### Installation
 
-react-twinkle is not on npm yet. Build it from a checkout and install it
-from there:
-
 ```sh
-git clone https://github.com/luisa-reis/react-twinkle.git
-cd react-twinkle
-npm install
-npm run build
-
-cd ../your-app
-npm install ../react-twinkle react
+npm install react-twinkle react
 ```
 
 ### Usage
@@ -88,6 +79,15 @@ render(
 [docs/fonts.md](docs/fonts.md) says where to get a font file such as
 `font_9x15.raw`, and [docs/outputs.md](docs/outputs.md) how to write a PNG
 when there is no panel.
+
+### Example app
+
+[examples/dashboard](examples/dashboard) is a complete app to start from:
+a separate package that installs react-twinkle from npm and cycles
+through a clock, the weather, this machine's load and scrolling news,
+with live data, tests and a mode that restarts on every save.
+
+![The example dashboard's four pages](docs/screenshots/dashboard.png)
 
 ## Documentation
 
