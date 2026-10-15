@@ -2,7 +2,23 @@
   "name": "react-twinkle",
   "version": "0.1.0",
   "description": "React for LED matrices: a custom renderer that draws components into a pixel canvas, the way Ink draws them into a terminal",
+  "keywords": [
+    "react",
+    "renderer",
+    "led",
+    "led-matrix",
+    "wled",
+    "ddp",
+    "pixels"
+  ],
   "license": "MIT",
+  "author": "Luisa Reis",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luisa-reis/react-twinkle.git"
+  },
+  "homepage": "https://github.com/luisa-reis/react-twinkle#readme",
+  "bugs": "https://github.com/luisa-reis/react-twinkle/issues",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -26,7 +42,8 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run lint && npm run format:check && npm run typecheck && npm test"
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test",
+    "prepublishOnly": "npm run check && npm run build"
   },
   "peerDependencies": {
     "react": "^18.3.1"
