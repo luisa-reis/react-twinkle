@@ -16,5 +16,6 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["src", "test", "examples", "scripts", "*.config.ts", ".eslintrc.cjs"]
+  "include": ["src", "test", "examples", "scripts", "*.config.ts", ".eslintrc.cjs"],
+  "exclude": ["examples/dashboard"]
 }

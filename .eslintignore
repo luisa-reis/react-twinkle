@@ -1,2 +1,4 @@
 dist/
 node_modules/
+# A package of its own, with its own checks.
+examples/dashboard/

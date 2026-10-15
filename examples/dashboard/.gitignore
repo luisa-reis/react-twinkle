@@ -1,0 +1,5 @@
+node_modules/
+# Fetched by `npm run fonts`; fonts are never kept in the repository.
+/fonts/
+# What `npm run snapshot` writes.
+/*.png

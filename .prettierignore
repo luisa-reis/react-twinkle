@@ -1,3 +1,5 @@
 dist/
 node_modules/
 package-lock.json
+# Fetched by the example dashboard; never kept.
+examples/dashboard/fonts/
